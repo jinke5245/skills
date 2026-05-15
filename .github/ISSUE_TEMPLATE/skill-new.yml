@@ -1,0 +1,55 @@
+name: Skill request
+description: Propose a new reusable agent skill.
+title: "feat: add <skill-name> skill"
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this template to propose a new skill for Codex, Claude Code, GitHub Copilot, or another agent runtime.
+  - type: input
+    id: skill-name
+    attributes:
+      label: Skill name
+      description: Use lowercase kebab-case.
+      placeholder: "example-skill"
+    validations:
+      required: true
+  - type: textarea
+    id: use-case
+    attributes:
+      label: Use case
+      description: What should the agent be able to do, and when should this skill be used?
+      placeholder: "This skill should help an agent..."
+    validations:
+      required: true
+  - type: dropdown
+    id: target-agents
+    attributes:
+      label: Target agent runtimes
+      multiple: true
+      options:
+        - Codex
+        - Claude Code
+        - GitHub Copilot
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: workflow
+    attributes:
+      label: Expected workflow
+      description: Outline inputs, tools, APIs, files, and verification steps if known.
+  - type: textarea
+    id: references
+    attributes:
+      label: References
+      description: Link to related docs, examples, repositories, or prior art.
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Checklist
+      options:
+        - label: This is a reusable skill, not a one-off project instruction.
+          required: true
+        - label: The request does not include credentials, private URLs, or workspace-specific details.
+          required: true

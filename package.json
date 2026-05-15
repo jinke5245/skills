@@ -1,0 +1,35 @@
+{
+  "name": "@jinke5245/skills",
+  "private": true,
+  "devDependencies": {
+    "@commitlint/cli": "^21.0.1",
+    "@commitlint/config-conventional": "^21.0.1",
+    "husky": "^9.1.7",
+    "markdownlint-cli2": "^0.22.1",
+    "yaml": "^2.9.0"
+  },
+  "scripts": {
+    "lint:markdown": "markdownlint-cli2 --config package.json --configPointer /markdownlint-cli2",
+    "prepare": "husky",
+    "verify:skills": "node scripts/verify-skills/index.mjs"
+  },
+  "commitlint": {
+    "extends": [
+      "@commitlint/config-conventional"
+    ]
+  },
+  "markdownlint-cli2": {
+    "config": {
+      "MD013": false
+    },
+    "globs": [
+      "**/*.md"
+    ],
+    "ignores": [
+      ".github/**",
+      ".agents/**",
+      "node_modules/**"
+    ]
+  },
+  "packageManager": "npm@10.9.7+sha512.d7bbbdf92b2fe9ab378ae6b697a69b4efd47e13b500e195efd09fe5c9e138ca4784b32239353b1dd26574550545b8f0aa232edb47350524fd4d349bbb21d4e1b"
+}

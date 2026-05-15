@@ -1,0 +1,35 @@
+name: Repository maintenance
+description: Improve documentation, tooling, templates, or repository structure.
+title: "chore: "
+body:
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - README or documentation
+        - GitHub templates
+        - Development tooling
+        - Repository structure
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What should be improved, clarified, or maintained?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposal
+      description: Describe the desired change.
+    validations:
+      required: true
+  - type: textarea
+    id: validation
+    attributes:
+      label: Validation
+      description: List any expected checks, commands, or review steps.

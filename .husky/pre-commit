@@ -1,0 +1,1 @@
+npm exec -- markdownlint-cli2 --config package.json --configPointer /markdownlint-cli2

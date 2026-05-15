@@ -1,0 +1,42 @@
+name: skills verify
+
+on:
+  pull_request:
+    paths:
+      - .github/actions/node-setup/**
+      - .github/workflows/skills-verify.yml
+      - .node_version
+      - package-lock.json
+      - package.json
+      - scripts/verify-skills/**
+      - skills/**
+  push:
+    branches:
+      - main
+    paths:
+      - .github/actions/node-setup/**
+      - .github/workflows/skills-verify.yml
+      - .node_version
+      - package-lock.json
+      - package.json
+      - scripts/verify-skills/**
+      - skills/**
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  skills-verify:
+    name: skills verify
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: check out repository
+        uses: actions/checkout@v6
+
+      - name: set up node.js
+        uses: ./.github/actions/node-setup
+
+      - name: run skill verification
+        run: npm run verify:skills

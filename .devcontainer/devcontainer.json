@@ -1,0 +1,31 @@
+{
+    "image": "mcr.microsoft.com/devcontainers/base:ubuntu24.04",
+    "features": {
+        "ghcr.io/devcontainers/features/common-utils:2": {},
+        "ghcr.io/devcontainers/features/node:2": {
+            "version": "22",
+            "npmVersion": "10.9.7"
+        },
+        "ghcr.io/devcontainers/features/github-cli:1": {},
+        "ghcr.io/devcontainers/features/docker-in-docker:2": {}
+    },
+    "remoteEnv": {
+        "PATH": "${containerEnv:PATH}:${containerWorkspaceFolder}/node_modules/.bin",
+        "LOCAL_WORKSPACE_FOLDER": "${localWorkspaceFolder}"
+    },
+    "onCreateCommand": {
+        "script": "bash -x .devcontainer/on-create-command.sh"
+    },
+    "postCreateCommand": {
+        "script": "bash -x .devcontainer/post-create-command.sh"
+    },
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "davidanson.vscode-markdownlint",
+                "redhat.vscode-yaml",
+                "tamasfe.even-better-toml"
+            ]
+        }
+    }
+}

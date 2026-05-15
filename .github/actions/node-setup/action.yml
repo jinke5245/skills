@@ -1,0 +1,14 @@
+name: node setup
+description: set up node.js and install npm dependencies.
+runs:
+  using: composite
+  steps:
+    - name: set up node.js
+      uses: actions/setup-node@v6
+      with:
+        node-version-file: .node_version
+        cache: npm
+
+    - name: install dependencies
+      shell: bash
+      run: npm ci --ignore-scripts

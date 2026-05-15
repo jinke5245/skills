@@ -1,0 +1,51 @@
+name: Skill change
+description: Fix or improve an existing skill.
+title: "fix: update <skill-name> skill"
+body:
+  - type: input
+    id: skill-name
+    attributes:
+      label: Skill name
+      placeholder: "example-skill"
+    validations:
+      required: true
+  - type: dropdown
+    id: change-type
+    attributes:
+      label: Change type
+      options:
+        - Bug fix
+        - Workflow improvement
+        - Documentation update
+        - Agent-specific metadata
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: current-behavior
+    attributes:
+      label: Current behavior
+      description: What is confusing, missing, incorrect, or hard to use?
+    validations:
+      required: true
+  - type: textarea
+    id: requested-change
+    attributes:
+      label: Requested change
+      description: Describe the expected behavior or content change.
+    validations:
+      required: true
+  - type: textarea
+    id: validation
+    attributes:
+      label: Validation
+      description: How should this change be reviewed or tested?
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Checklist
+      options:
+        - label: The request is scoped to a single skill.
+          required: true
+        - label: The request does not include credentials, private URLs, or workspace-specific details.
+          required: true

@@ -1,0 +1,26 @@
+name: markdown lint
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  markdown-lint:
+    name: markdown lint
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: check out repository
+        uses: actions/checkout@v6
+
+      - name: set up node.js
+        uses: ./.github/actions/node-setup
+
+      - name: run markdown lint
+        run: npm run lint:markdown

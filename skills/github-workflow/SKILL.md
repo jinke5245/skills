@@ -143,7 +143,7 @@ local changes:
 Create an issue:
 
 ```bash
-gh issue create --title "<type>: <short imperative summary>" --body-file <file>
+gh issue create --template <template-name>
 ```
 
 Create an issue branch:

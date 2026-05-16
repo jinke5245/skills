@@ -25,7 +25,9 @@ When the user asks to commit, push, publish, or open/update a pull request:
 2. Commit with an English semantic commit message.
 3. Push the branch and create or update a draft pull request linked to the
    issue.
-4. Address CI and review feedback through the pull request.
+4. After pushing review fixes, request Copilot re-review when useful:
+   `gh pr edit <pr-number> --add-reviewer @copilot`.
+5. Address CI and review feedback through the pull request.
 
 If a matching issue, branch, and pull request already exist, reuse them after
 verifying they match the current task.

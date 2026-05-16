@@ -65,6 +65,11 @@ or:
 npx add-skill https://github.com/jinke5245/skills.git --list
 ```
 
+Current skills:
+
+- `github-workflow`: issue-first GitHub CLI workflow for pull-request-based
+  repository changes.
+
 ## Update A Skill
 
 Re-run the same install command to refresh the installed copy:

@@ -5,6 +5,36 @@ including Codex, Claude Code, GitHub Copilot, and compatible tools.
 
 ## Collaboration Rules
 
+### Required GitHub Workflow
+
+Use the repository-local `github-workflow` skill before starting any task that
+may change files, commits, branches, issues, or pull requests in this
+repository. The skill is linked at `.agents/skills/github-workflow`.
+
+Before editing files:
+
+1. Create or identify a matching GitHub issue with an English semantic title.
+2. Create and switch to an issue-number-prefixed branch using
+   `<issue-number>-<semantic-title-slug>`.
+3. Implement only the scoped change on that branch.
+4. Validate the change before handing work back.
+
+When the user asks to commit, push, publish, or open/update a pull request:
+
+1. Re-check the worktree and stage only scoped changes.
+2. Commit with an English semantic commit message.
+3. Push the branch and create or update a draft pull request linked to the
+   issue.
+4. Address CI and review feedback through the pull request.
+
+If a matching issue, branch, and pull request already exist, reuse them after
+verifying they match the current task.
+
+Do not commit, push, or create/update pull requests unless the user asks for
+that step or explicitly confirms it. All committed repository changes must go
+through pull requests. Keep pull requests small and focused; split large
+features into smaller issues and pull requests before editing.
+
 ### Language And Naming
 
 All issue titles, pull request titles, branch names, and commit messages must be in English.

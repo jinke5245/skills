@@ -49,9 +49,10 @@ Issue templates:
   template applies.
 - Also respect project-level default issue templates when they are visible in
   repository instructions or GitLab project settings.
-- `glab --template` loads local repository templates; if only a project, group,
-  or instance default template is available, use the web or interactive flow, or
-  manually follow the visible template structure.
+- The `--template` flag on `glab issue create` loads local repository
+  templates; if only a project, group, or instance default template is
+  available, use the web or interactive flow, or manually follow the visible
+  template structure.
 
 Merge request templates:
 
@@ -60,9 +61,9 @@ Merge request templates:
   template applies.
 - Also respect project-level default merge request templates when they are
   visible in repository instructions or GitLab project settings.
-- `glab --template` loads local repository templates; if only a project, group,
-  or instance default template is available, use the web or interactive flow, or
-  manually follow the visible template structure.
+- The `--template` flag on `glab mr create` loads local repository templates;
+  if only a project, group, or instance default template is available, use the
+  web or interactive flow, or manually follow the visible template structure.
 
 ## Required Sequence
 
@@ -142,7 +143,8 @@ existing local changes:
 3. If a matching merge request exists, reuse it.
 4. If no merge request exists but the branch already follows
    `<issue-iid>-<semantic-title-slug>`, create or identify the matching issue,
-   then create a linked draft merge request.
+   validate the scoped changes, commit with a semantic English commit message,
+   push the branch, then create a linked draft merge request.
 5. If the branch does not follow the issue-branch format, do not commit
    directly. Create or identify the issue, create the issue branch, and move the
    work there before committing.
@@ -200,6 +202,12 @@ Inspect unresolved discussions:
 
 ```bash
 glab mr view --unresolved
+```
+
+If the installed `glab` version does not support `--unresolved`, use:
+
+```bash
+glab mr view --comments
 ```
 
 ## Failure Handling

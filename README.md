@@ -69,6 +69,8 @@ Current skills:
 
 - `github-workflow`: issue-first GitHub CLI workflow for pull-request-based
   repository changes.
+- `gitlab-workflow`: issue-first GitLab CLI workflow for merge-request-based
+  repository changes.
 
 ## Update A Skill
 

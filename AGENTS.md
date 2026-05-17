@@ -98,4 +98,5 @@ npm run verify:skills
 - Use `.github/ISSUE_TEMPLATE/skill-new.yml` for new skill requests.
 - Use `.github/ISSUE_TEMPLATE/skill-update.yml` for existing skill changes.
 - Use `.github/ISSUE_TEMPLATE/maintenance.yml` for repository maintenance.
-- Keep pull request descriptions aligned with `.github/PULL_REQUEST_TEMPLATE.md`.
+- Keep pull request descriptions aligned with `.github/PULL_REQUEST_TEMPLATE.md`
+  or the matching focused template under `.github/PULL_REQUEST_TEMPLATE/`.

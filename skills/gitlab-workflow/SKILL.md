@@ -29,8 +29,12 @@ tracking artifacts.
   truth for GitLab artifact content.
 - Default to English for issue titles, merge request titles, branch names,
   commit messages, issue descriptions, merge request descriptions, and review
-  summaries unless repository instructions, project conventions, or the user
-  request another language.
+  summaries.
+- Repository instructions and project conventions take precedence. If they
+  require a specific language for titles, branch names, or commit messages, use
+  that language. Otherwise, follow the user's requested language when provided,
+  especially for issue descriptions, merge request descriptions, and review
+  summaries.
 - When later steps refer to the selected language, use the language chosen by
   that default-language rule.
 - Use semantic titles and commit messages:
@@ -101,7 +105,6 @@ Merge request templates:
      --related-issue <issue-iid> \
      --draft \
      --title "<approved-issue-title>" \
-     --description "" \
      --yes
    ```
 
@@ -109,6 +112,9 @@ Merge request templates:
    - Do not create the source branch locally first.
    - Do not pass `--source-branch` unless the project explicitly requires a
      custom branch name.
+   - Do not pass a custom `--description` during early merge request creation;
+     let `--related-issue` populate the initial related-issue content, then
+     update the merge request description after implementation when useful.
    - Use the approved issue title for `--title` so non-interactive `glab`
      does not prompt and the merge request stays aligned with the issue.
    - `glab` creates the related source branch from the issue, creates a draft
@@ -207,7 +213,6 @@ glab mr create \
   --related-issue <issue-iid> \
   --draft \
   --title "<approved-issue-title>" \
-  --description "" \
   --yes
 ```
 

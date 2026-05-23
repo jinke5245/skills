@@ -27,16 +27,13 @@ tracking artifacts.
 - Split large features into smaller issues and merge requests before editing.
 - Treat configured GitLab issue and merge request templates as the source of
   truth for GitLab artifact content.
-- Default to English for issue titles, merge request titles, branch names,
-  commit messages, issue descriptions, merge request descriptions, and review
-  summaries.
-- Repository instructions and project conventions take precedence. If they
-  require a specific language for titles, branch names, or commit messages, use
-  that language. Otherwise, follow the user's requested language when provided,
-  especially for issue descriptions, merge request descriptions, and review
-  summaries.
-- When later steps refer to the selected language, use the language chosen by
-  that default-language rule.
+- Default to English for issue titles, merge request titles, branch names, and
+  commit messages. Use another language for those identifier-like artifacts only
+  when repository instructions, project conventions, or the user explicitly
+  requests that language for those artifacts.
+- Default to English for issue descriptions, merge request descriptions, and
+  review summaries, but follow repository instructions, project conventions, or
+  the user's requested language when provided.
 - Use semantic titles and commit messages:
 
 ```text
@@ -91,7 +88,8 @@ Merge request templates:
 3. If the task is too large for one focused merge request, propose a split
    before creating GitLab artifacts.
 4. Draft the GitLab issue title and description.
-   - Use a semantic title in the selected language.
+   - Use a semantic English title unless the language rule above calls for
+     another language.
    - Use the applicable issue template when one exists.
    - Fill the template's required sections before adding generic context such
      as goal, scope, acceptance criteria, and validation notes.
@@ -134,7 +132,8 @@ Merge request templates:
    If a local branch already exists, use `git switch <source-branch>` instead.
 8. Implement the requested change only on the related merge request branch.
 9. Run relevant checks before committing.
-10. Commit with a semantic commit message in the selected language.
+10. Commit with a semantic English commit message unless the language rule above
+    calls for another language.
 11. Before pushing or requesting review, draft an updated merge request
     description when useful.
     - Use the matching merge request template as structure.
@@ -192,9 +191,10 @@ existing local changes:
 6. If the current branch is not the related merge request source branch, do not
    commit directly. Check out the GitLab-created source branch and move the
    scoped work there before committing.
-7. Validate the scoped changes, commit with a semantic commit message in the
-   selected language, draft the merge request description when useful, get user
-   approval before updating it, then push the related source branch.
+7. Validate the scoped changes, commit with a semantic English commit message
+   unless the language rule above calls for another language, draft the merge
+   request description when useful, get user approval before updating it, then
+   push the related source branch.
 
 ## Useful Commands
 

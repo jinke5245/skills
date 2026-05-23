@@ -21,13 +21,18 @@ tracking artifacts.
 
 ## Principles
 
-- All code changes must go through a pull request.
+- All committed code changes must go through a pull request.
 - Keep pull requests small, focused, and easy to review.
 - Split large features into smaller issues and pull requests before editing.
 - Treat configured GitHub issue and pull request templates as the source of
   truth for GitHub artifact content.
-- Use English for issue titles, pull request titles, branch names, and commit
-  messages.
+- Default to English for issue titles, pull request titles, branch names, and
+  commit messages. Use another language for those identifier-like artifacts only
+  when repository instructions, project conventions, or the user explicitly
+  requests that language for those artifacts.
+- Default to English for issue descriptions, pull request descriptions, and
+  review summaries, but follow repository instructions, project conventions, or
+  the user's requested language when provided.
 - Use semantic titles and commit messages:
 
 ```text
@@ -53,7 +58,10 @@ Pull request templates:
 - Use single-file templates such as `PULL_REQUEST_TEMPLATE.md`,
   `docs/PULL_REQUEST_TEMPLATE.md`, and `.github/PULL_REQUEST_TEMPLATE.md`.
 - If `PULL_REQUEST_TEMPLATE/` exists under the repository root, `docs/`, or
-  `.github/`, choose the template that best matches the pull request scope.
+  `.github/`, choose the focused template that best matches the issue template,
+  requested change type, or pull request scope.
+- If no focused pull request template matches, use the default pull request
+  template when one exists.
 
 ## Required Sequence
 
@@ -67,12 +75,16 @@ Pull request templates:
 
 3. If the task is too large for one focused pull request, propose a split before
    creating GitHub artifacts.
-4. Create a GitHub issue with `gh issue create`.
-   - Use a semantic English title.
+4. Draft the GitHub issue title and description.
+   - Use a semantic English title unless the language rule above calls for
+     another language.
    - Use the applicable issue template when one exists.
    - Fill the template's required sections before adding generic context such
      as goal, scope, acceptance criteria, and validation notes.
-5. Create and switch to an issue-prefixed branch:
+   - Show the draft issue content to the user and wait for approval before
+     creating the issue, unless the user explicitly asked to skip review.
+5. Create the approved GitHub issue with `gh issue create`.
+6. Create and switch to an issue-prefixed branch locally:
 
    ```text
    <issue-number>-<semantic-title-slug>
@@ -84,18 +96,25 @@ Pull request templates:
    12-feat-add-github-workflow-skill
    ```
 
-6. Implement the requested change only on the issue branch.
-7. Run relevant checks before committing.
-8. Commit with a semantic English commit message.
-9. Push the branch.
-10. Create a draft pull request linked to the issue.
-    - Use the repository pull request template when one exists.
-    - Fill the template's required sections before adding extra context.
+7. Implement the requested change only on the issue branch.
+8. Run relevant checks before committing.
+9. Commit with a semantic English commit message unless the language rule above
+   calls for another language.
+10. Before pushing or requesting review, draft the pull request title and
+    description.
+    - Use the matching pull request template as structure.
+    - Combine the template with issue context, actual branch diffs or commits,
+      and validation results.
     - Link the issue with `Closes #<issue-number>`.
-11. Inspect pull request checks.
-12. Address review feedback in focused follow-up commits or amended commits,
+    - Show the draft pull request content to the user and wait for approval
+      before creating or updating the pull request, unless the user explicitly
+      asked to skip review.
+11. Push the branch.
+12. Create or update a draft pull request linked to the issue.
+13. Inspect pull request checks.
+14. Address review feedback in focused follow-up commits or amended commits,
     according to the repository's preferred history style.
-13. Wait for checks and review to complete before merging.
+15. Wait for checks and review to complete before merging.
 
 ## Review Feedback Loop
 
@@ -106,10 +125,13 @@ When review comments or CI failures appear:
 3. Apply only the requested, scoped fixes.
 4. Re-run the relevant checks.
 5. Commit or amend as appropriate, then push.
-6. Summarize what feedback was addressed and what remains open.
+6. Resolve only the review threads that were addressed when the user explicitly
+   asked for thread resolution or asked to address review feedback end to end.
+7. Request re-review when useful, according to the repository's review workflow.
+8. Summarize what feedback was addressed and what remains open.
 
-Do not resolve review threads, submit reviews, approve, merge, or delete branches
-unless the user explicitly asks.
+Do not resolve unrelated review threads, submit reviews, approve, merge, or
+delete branches unless the user explicitly asks.
 
 ## Existing Local Work
 
@@ -128,22 +150,29 @@ local changes:
    gh pr view
    ```
 
-3. If a matching pull request exists, reuse it.
-4. If no pull request exists but the branch already follows
-   `<issue-number>-<semantic-title-slug>`, commit and push the scoped changes,
-   then create a linked draft pull request.
-5. If the branch does not follow the issue-branch format, do not commit
+3. Preserve unrelated user changes, and later stage only files that belong to
+   the current task.
+4. If a matching pull request exists, reuse it.
+5. If no pull request exists but the branch already follows
+   `<issue-number>-<semantic-title-slug>`, create or identify the matching
+   issue, validate the scoped changes, commit with a semantic English commit
+   message unless the language rule above calls for another language, draft the
+   pull request description when useful, get user approval before creating or
+   updating it, push the branch, then create or update the pull request.
+6. If the branch does not follow the issue-branch format, do not commit
    directly. Create or identify the issue, create the issue branch, and move the
-   work there before committing.
-6. Preserve unrelated user changes and stage only files that belong to the
-   current task.
+   scoped work there before committing.
+7. If existing local changes are mixed, confirm the scoped subset before staging
+   or moving work.
 
 ## Useful Commands
 
-Create an issue:
+Create an issue from approved content:
 
 ```bash
-gh issue create --template <template-name>
+gh issue create \
+  --title "<type>: <short imperative summary>" \
+  --body-file <file>
 ```
 
 Create an issue branch:
@@ -169,6 +198,12 @@ gh pr create \
   --body-file <file>
 ```
 
+Update an existing pull request description:
+
+```bash
+gh pr edit <pr-number> --body-file <file>
+```
+
 Inspect checks:
 
 ```bash
@@ -189,6 +224,7 @@ gh pr view --json number,title,url,state,isDraft,reviewDecision,statusCheckRollu
   use the proxy settings provided by the user.
 - If the current worktree has unrelated changes, preserve them and do not stage
   or commit them unless the user explicitly asks.
-- If the current branch is `main`, create an issue branch before editing files.
+- If the current branch is `main`, create or identify an approved issue and
+  create an issue branch before editing files.
 - If a pull request already exists for the current branch and matches the task,
   reuse it instead of creating a duplicate.

@@ -105,6 +105,8 @@ Pull request templates:
    calls for another language.
 10. Before pushing or requesting review, draft the pull request title and
     description.
+    - Use a semantic English pull request title unless the language rule above
+      calls for another language.
     - Use the matching pull request template as structure.
     - Combine the template with issue context, actual branch diffs or commits,
       and validation results.
@@ -191,9 +193,10 @@ Create an issue from an issue form:
 gh issue create --template <template-file> --web
 ```
 
-Use the template filename from `.github/ISSUE_TEMPLATE/` for `<template-file>`.
-Use the web or interactive flow for issue forms so required fields are
-preserved.
+Use an actual issue template filename from `.github/ISSUE_TEMPLATE/` for
+`<template-file>`, such as `skill-update.yml`, `skill-new.yml`, or
+`maintenance.yml`. Do not use `config.yml`. Use the web or interactive flow for
+issue forms so required fields are preserved.
 
 Create an issue from an approved Markdown body:
 

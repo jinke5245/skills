@@ -133,8 +133,8 @@ When review comments or CI failures appear:
 7. Request re-review when useful, according to the repository's review workflow.
 8. Summarize what feedback was addressed and what remains open.
 
-Do not resolve unrelated review threads, submit reviews, approve, merge, or
-delete branches unless the user explicitly asks.
+Do not resolve any review thread unless it satisfies step 6. Do not submit
+reviews, approve, merge, or delete branches unless the user explicitly asks.
 
 ## Existing Local Work
 
@@ -157,12 +157,15 @@ local changes:
    the current task.
 4. If a matching pull request exists, reuse it.
 5. If no pull request exists but the branch already follows
-   `<issue-number>-<semantic-title-slug>`, create or identify the matching
-   issue, validate the scoped changes, commit with a semantic English commit
-   message unless the language rule above calls for another language, draft the
-   pull request title and description from the matching template, issue context,
-   scoped changes, and validation results, get user approval before creating or
-   updating it, push the branch, then create or update the pull request.
+   `<issue-number>-<semantic-title-slug>`, keep the existing branch and:
+   - Create or identify the matching issue.
+   - Validate the scoped changes.
+   - Commit with a semantic English commit message unless the language rule
+     above calls for another language.
+   - Draft the pull request title and description from the matching template,
+     issue context, scoped changes, and validation results.
+   - Get user approval before creating or updating the pull request.
+   - Push the branch, then create or update the pull request.
 6. If the branch does not follow the issue-branch format, do not commit
    directly. Create or identify the issue, create the issue branch, and move the
    scoped work there before committing.

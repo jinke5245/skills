@@ -100,7 +100,7 @@ Merge request templates:
    glab mr create \
      --related-issue <issue-iid> \
      --draft \
-     --title "<type>: <short imperative summary>" \
+     --title "<approved-issue-title>" \
      --description "" \
      --yes
    ```
@@ -109,6 +109,8 @@ Merge request templates:
    - Do not create the source branch locally first.
    - Do not pass `--source-branch` unless the project explicitly requires a
      custom branch name.
+   - Use the approved issue title for `--title` so non-interactive `glab`
+     does not prompt and the merge request stays aligned with the issue.
    - `glab` creates the related source branch from the issue, creates a draft
      merge request, and appends `Closes #<issue-iid>` to the merge request
      description.
@@ -122,6 +124,7 @@ Merge request templates:
    git switch --track origin/<source-branch>
    ```
 
+   Use the `source_branch` field from the JSON output as `<source-branch>`.
    If a local branch already exists, use `git switch <source-branch>` instead.
 8. Implement the requested change only on the related merge request branch.
 9. Run relevant checks before committing.
@@ -203,7 +206,7 @@ Create an early draft merge request and related branch:
 glab mr create \
   --related-issue <issue-iid> \
   --draft \
-  --title "<type>: <short imperative summary>" \
+  --title "<approved-issue-title>" \
   --description "" \
   --yes
 ```
@@ -215,6 +218,8 @@ glab mr view <merge-request-iid> --output json
 git fetch origin <source-branch>
 git switch --track origin/<source-branch>
 ```
+
+Use the `source_branch` field from the JSON output as `<source-branch>`.
 
 Update the merge request description after implementation:
 

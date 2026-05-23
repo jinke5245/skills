@@ -31,6 +31,8 @@ tracking artifacts.
   commit messages, issue descriptions, merge request descriptions, and review
   summaries unless repository instructions, project conventions, or the user
   request another language.
+- When later steps refer to the selected language, use the language chosen by
+  that default-language rule.
 - Use semantic titles and commit messages:
 
 ```text
@@ -97,6 +99,7 @@ Merge request templates:
    ```bash
    glab mr create \
      --related-issue <issue-iid> \
+     --draft \
      --title "<type>: <short imperative summary>" \
      --description "" \
      --yes
@@ -199,6 +202,7 @@ Create an early draft merge request and related branch:
 ```bash
 glab mr create \
   --related-issue <issue-iid> \
+  --draft \
   --title "<type>: <short imperative summary>" \
   --description "" \
   --yes

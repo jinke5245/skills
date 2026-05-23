@@ -86,7 +86,7 @@ Pull request templates:
      as goal, scope, acceptance criteria, and validation notes.
    - Show the draft issue content to the user and wait for approval before
      creating the issue, unless the user explicitly asked to skip review.
-5. Create the approved GitHub issue with `gh issue create`.
+5. Create the issue from the approved draft content with `gh issue create`.
 6. Create and switch to an issue-prefixed branch locally:
 
    ```text
@@ -155,7 +155,14 @@ local changes:
 
 3. Preserve unrelated user changes, and later stage only files that belong to
    the current task.
-4. If a matching pull request exists, reuse it.
+4. If a matching pull request exists, reuse it and:
+   - Validate the scoped changes.
+   - Commit with a semantic English commit message unless the language rule
+     above calls for another language.
+   - Draft any needed pull request title or description updates from the
+     matching template, issue context, scoped changes, and validation results.
+   - Get user approval before updating the pull request.
+   - Push the branch, then update the pull request when needed.
 5. If no pull request exists but the branch already follows
    `<issue-number>-<semantic-title-slug>`, keep the existing branch and:
    - Create or identify the matching issue.

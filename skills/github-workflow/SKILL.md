@@ -174,7 +174,7 @@ local changes:
 Create an issue from an issue form:
 
 ```bash
-gh issue create --template <template.yml>
+gh issue create --template <template-file>
 ```
 
 Create an issue from an approved Markdown body:

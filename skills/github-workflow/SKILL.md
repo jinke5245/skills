@@ -174,8 +174,12 @@ local changes:
 Create an issue from an issue form:
 
 ```bash
-gh issue create --template <template-file>
+gh issue create --template <template-file> --web
 ```
+
+Use the template filename from `.github/ISSUE_TEMPLATE/` for `<template-file>`.
+Use the web or interactive flow for issue forms so required fields are
+preserved.
 
 Create an issue from an approved Markdown body:
 

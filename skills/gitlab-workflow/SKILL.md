@@ -2,8 +2,9 @@
 name: gitlab-workflow
 description: >
   Use GitLab CLI to run issue-first, merge-request-based development workflows:
-  create semantic issues, issue-prefixed branches, early linked draft merge
-  requests, focused commits, review-feedback fixes, and merge-ready MRs.
+  create semantic issues, early linked draft merge requests, GitLab-created
+  related branches, focused commits, review-feedback fixes, and merge-ready
+  MRs.
 ---
 
 # GitLab Workflow
@@ -26,8 +27,13 @@ tracking artifacts.
 - Split large features into smaller issues and merge requests before editing.
 - Treat configured GitLab issue and merge request templates as the source of
   truth for GitLab artifact content.
-- Use English for issue titles, merge request titles, branch names, and commit
-  messages.
+- Default to English for issue titles, merge request titles, branch names, and
+  commit messages. Use another language for those identifier-like artifacts only
+  when repository instructions, project conventions, or the user explicitly
+  requests that language for those artifacts.
+- Default to English for issue descriptions, merge request descriptions, and
+  review summaries, but follow repository instructions, project conventions, or
+  the user's requested language when provided.
 - Use semantic titles and commit messages:
 
 ```text
@@ -57,13 +63,17 @@ Issue templates:
 Merge request templates:
 
 - Prefer matching templates in `.gitlab/merge_request_templates/`.
-- Use `glab mr create --template <template-name>` when a local merge request
-  template applies.
+- Do not combine `glab mr create --related-issue` with `--template`; current
+  `glab` versions treat those flags as mutually exclusive.
+- When creating a related draft merge request early, create it without a merge
+  request template. Use the template later when updating the merge request
+  description after implementation.
 - Also respect project-level default merge request templates when they are
   visible in repository instructions or GitLab project settings.
 - The `--template` flag on `glab mr create` loads local repository templates;
   if only a project, group, or instance default template is available, use the
-  web or interactive flow, or manually follow the visible template structure.
+  web or interactive flow for description updates, or manually follow the
+  visible template structure.
 
 ## Required Sequence
 
@@ -77,36 +87,69 @@ Merge request templates:
 
 3. If the task is too large for one focused merge request, propose a split
    before creating GitLab artifacts.
-4. Create a GitLab issue with `glab issue create`.
-   - Use a semantic English title.
+4. Draft the GitLab issue title and description.
+   - Use a semantic English title unless the language rule above calls for
+     another language.
    - Use the applicable issue template when one exists.
    - Fill the template's required sections before adding generic context such
      as goal, scope, acceptance criteria, and validation notes.
-5. Create and switch to an issue-prefixed branch:
+   - Show the draft issue content to the user and wait for approval before
+     creating the issue, unless the user explicitly asked to skip review.
+5. Create the approved GitLab issue with `glab issue create`.
+6. Create a linked draft merge request immediately from the issue:
 
-   ```text
-   <issue-iid>-<semantic-title-slug>
+   ```bash
+   glab mr create \
+     --related-issue <issue-iid> \
+     --draft \
+     --title "<approved-issue-title>" \
+     --yes
    ```
 
-   Example:
+   - Do not pass `--template` with `--related-issue`.
+   - Do not create the source branch locally first.
+   - Do not pass `--source-branch` unless the project explicitly requires a
+     custom branch name.
+   - Do not pass a custom `--description` during early merge request creation;
+     let `--related-issue` populate the initial related-issue content, then
+     update the merge request description after implementation when useful.
+   - Use the approved issue title for `--title` so non-interactive `glab`
+     does not prompt and the merge request stays aligned with the issue.
+   - `glab` creates the related source branch from the issue, creates a draft
+     merge request, and appends `Closes #<issue-iid>` to the merge request
+     description.
+   - Record the merge request URL or IID from the `glab mr create` output.
+7. Inspect the created merge request to find the source branch, then fetch and
+   check out that branch locally:
 
-   ```text
-   12-feat-add-gitlab-workflow-skill
+   ```bash
+   glab mr view <merge-request-iid> --output json
+   git fetch origin <source-branch>
+   git switch --track origin/<source-branch>
    ```
 
-6. Create a linked draft merge request early, before implementation, when the
-   project supports it.
-   - Link it to the issue with `Closes #<issue-iid>`.
-   - Use the repository merge request template when one exists.
-   - Fill the template's required sections before adding extra context.
-7. Implement the requested change only on the issue branch.
-8. Run relevant checks before committing.
-9. Commit with a semantic English commit message.
-10. Push the branch.
-11. Inspect pipeline status and merge request discussions.
-12. Address review feedback in focused follow-up commits or amended commits,
+   Use the `source_branch` field from the JSON output as `<source-branch>`.
+   If a local branch already exists, use `git switch <source-branch>` instead.
+8. Implement the requested change only on the related merge request branch.
+9. Run relevant checks before committing.
+10. Commit with a semantic English commit message unless the language rule above
+    calls for another language.
+11. Before pushing or requesting review, draft an updated merge request
+    description when useful.
+    - Use the matching merge request template as structure.
+    - Combine the template with issue context, actual branch diffs or commits,
+      and validation results.
+    - Avoid duplicating `Closes #<issue-iid>` because `--related-issue`
+      already adds it.
+    - Show the draft merge request description to the user and wait for approval
+      before updating the merge request, unless the user explicitly asked to
+      skip review.
+12. Update the merge request description after approval.
+13. Push the branch.
+14. Inspect pipeline status and merge request discussions.
+15. Address review feedback in focused follow-up commits or amended commits,
     according to the repository's preferred history style.
-13. Wait for pipelines and review to complete before merging.
+16. Wait for pipelines and review to complete before merging.
 
 ## Review Feedback Loop
 
@@ -140,16 +183,18 @@ existing local changes:
    glab mr view
    ```
 
-3. If a matching merge request exists, reuse it.
-4. If no merge request exists but the branch already follows
-   `<issue-iid>-<semantic-title-slug>`, create or identify the matching issue,
-   validate the scoped changes, commit with a semantic English commit message,
-   push the branch, then create a linked draft merge request.
-5. If the branch does not follow the issue-branch format, do not commit
-   directly. Create or identify the issue, create the issue branch, and move the
-   work there before committing.
-6. Preserve unrelated user changes and stage only files that belong to the
-   current task.
+3. Preserve unrelated user changes, and later stage only files that belong to
+   the current task.
+4. If a matching merge request exists, reuse it.
+5. If no merge request exists, create or identify the matching issue, then
+   create the related draft merge request before publishing the work.
+6. If the current branch is not the related merge request source branch, do not
+   commit directly. Check out the GitLab-created source branch and move the
+   scoped work there before committing.
+7. Validate the scoped changes, commit with a semantic English commit message
+   unless the language rule above calls for another language, draft the merge
+   request description when useful, get user approval before updating it, then
+   push the related source branch.
 
 ## Useful Commands
 
@@ -161,29 +206,36 @@ glab issue create --title "<type>: <short imperative summary>" \
   --yes
 ```
 
-Create an issue branch:
-
-```bash
-git switch -c <issue-iid>-<semantic-title-slug>
-```
-
-Create an early draft merge request:
+Create an early draft merge request and related branch:
 
 ```bash
 glab mr create \
-  --draft \
-  --create-source-branch \
-  --source-branch <issue-iid>-<semantic-title-slug> \
-  --target-branch <default-branch> \
   --related-issue <issue-iid> \
-  --template <template-name> \
+  --draft \
+  --title "<approved-issue-title>" \
   --yes
+```
+
+Inspect the merge request and check out the related branch:
+
+```bash
+glab mr view <merge-request-iid> --output json
+git fetch origin <source-branch>
+git switch --track origin/<source-branch>
+```
+
+Use the `source_branch` field from the JSON output as `<source-branch>`.
+
+Update the merge request description after implementation:
+
+```bash
+glab mr update <merge-request-iid> --description "<updated-markdown-body>"
 ```
 
 Push the branch:
 
 ```bash
-git push -u origin <issue-iid>-<semantic-title-slug>
+git push -u origin <source-branch>
 ```
 
 Inspect pipeline status:
@@ -218,7 +270,8 @@ glab mr view --comments
   use the proxy settings provided by the user.
 - If the current worktree has unrelated changes, preserve them and do not stage
   or commit them unless the user explicitly asks.
-- If the current branch is the default branch, create an issue branch before
-  editing files.
+- If the current branch is the default branch, create or identify an issue,
+  create the related draft merge request, and check out its source branch
+  before editing files.
 - If a merge request already exists for the current branch and matches the task,
   reuse it instead of creating a duplicate.

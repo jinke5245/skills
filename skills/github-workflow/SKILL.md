@@ -27,12 +27,13 @@ tracking artifacts.
 - Treat configured GitHub issue and pull request templates as the source of
   truth for GitHub artifact content.
 - Default to English for issue titles, pull request titles, branch names, and
-  commit messages. Use another language for those identifier-like artifacts only
-  when repository instructions, project conventions, or the user explicitly
-  requests that language for those artifacts.
+  commit messages. Repository instructions and project conventions take
+  precedence over user preference. Use another language for those
+  identifier-like artifacts only when it does not conflict with repository
+  rules and the user explicitly requests that language for those artifacts.
 - Default to English for issue descriptions, pull request descriptions, and
-  review summaries, but follow repository instructions, project conventions, or
-  the user's requested language when provided.
+  review summaries, but follow repository instructions and project conventions
+  first, then the user's requested language when provided.
 - Use semantic titles and commit messages:
 
 ```text
@@ -50,6 +51,8 @@ GitHub-supported locations.
 Issue templates:
 
 - Prefer matching issue forms or Markdown templates in `.github/ISSUE_TEMPLATE/`.
+- For GitHub issue forms, use the interactive or web flow so required form
+  fields are preserved.
 - Also respect legacy single-file templates such as `ISSUE_TEMPLATE.md`,
   `docs/ISSUE_TEMPLATE.md`, and `.github/ISSUE_TEMPLATE.md` when present.
 
@@ -168,7 +171,13 @@ local changes:
 
 ## Useful Commands
 
-Create an issue from approved content:
+Create an issue from an issue form:
+
+```bash
+gh issue create --template <template.yml>
+```
+
+Create an issue from an approved Markdown body:
 
 ```bash
 gh issue create \
@@ -225,7 +234,8 @@ gh pr view --json number,title,url,state,isDraft,reviewDecision,statusCheckRollu
   use the proxy settings provided by the user.
 - If the current worktree has unrelated changes, preserve them and do not stage
   or commit them unless the user explicitly asks.
-- If the current branch is `main`, create or identify an approved issue and
-  create an issue branch before editing files.
+- If the current branch is `main`, create or identify a matching issue, using
+  user-approved draft content for newly created issues, and create an issue
+  branch before editing files.
 - If a pull request already exists for the current branch and matches the task,
   reuse it instead of creating a duplicate.

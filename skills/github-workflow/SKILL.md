@@ -157,7 +157,8 @@ local changes:
    `<issue-number>-<semantic-title-slug>`, create or identify the matching
    issue, validate the scoped changes, commit with a semantic English commit
    message unless the language rule above calls for another language, draft the
-   pull request description when useful, get user approval before creating or
+   pull request title and description from the matching template, issue context,
+   scoped changes, and validation results, get user approval before creating or
    updating it, push the branch, then create or update the pull request.
 6. If the branch does not follow the issue-branch format, do not commit
    directly. Create or identify the issue, create the issue branch, and move the

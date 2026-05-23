@@ -170,7 +170,7 @@ local changes:
    number exists and matches the task.
    - If the prefixed issue matches, keep the existing branch.
    - If the prefixed issue does not exist or does not match, create or identify
-     the correct issue, create an issue-number branch for that issue, and move
+     the correct issue, create an issue-prefixed branch for that issue, and move
      the scoped work there before committing.
    - Validate the scoped changes.
    - Commit with a semantic English commit message unless the language rule

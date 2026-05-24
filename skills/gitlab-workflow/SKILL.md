@@ -103,18 +103,23 @@ Merge request templates:
      --related-issue <issue-iid> \
      --draft \
      --title "<approved-issue-title>" \
+     --description "" \
      --yes
    ```
 
    - Do not pass `--template` with `--related-issue`.
+   - Do not pass `--fill`; early related merge requests are created before
+     implementation commits exist, and `--fill` is commit-driven.
    - Do not create the source branch locally first.
    - Do not pass `--source-branch` unless the project explicitly requires a
      custom branch name.
-   - Do not pass a custom `--description` during early merge request creation;
-     let `--related-issue` populate the initial related-issue content, then
-     update the merge request description after implementation when useful.
-   - Use the approved issue title for `--title` so non-interactive `glab`
-     does not prompt and the merge request stays aligned with the issue.
+   - Pass `--description ""` only to satisfy non-interactive `glab` input
+     requirements. Do not add a custom merge request description during early
+     creation; let `--related-issue` populate the initial related-issue content,
+     then update the merge request description after implementation when useful.
+   - Use the approved issue title for `--title`; `--yes` skips submission
+     confirmation, but it does not replace the required non-interactive title
+     and description inputs.
    - `glab` creates the related source branch from the issue, creates a draft
      merge request, and appends `Closes #<issue-iid>` to the merge request
      description.
@@ -213,6 +218,7 @@ glab mr create \
   --related-issue <issue-iid> \
   --draft \
   --title "<approved-issue-title>" \
+  --description "" \
   --yes
 ```
 

@@ -119,8 +119,11 @@ user. Use `Labels: none` when no existing label clearly matches.
      existing label clearly matches.
    - Show the draft issue content to the user and wait for approval before
      creating the issue, unless the user explicitly asked to skip review.
-6. Create the issue from the approved draft content with `gh issue create`,
-   applying the approved existing labels when any were selected.
+6. Create the issue from the approved draft content with `gh issue create`.
+   - Apply approved existing labels during creation when the selected creation
+     flow supports labels.
+   - For issue forms, web flows, or interactive flows that cannot apply labels
+     during creation, add the approved labels afterward with `gh issue edit`.
 7. Create and switch to an issue-prefixed branch locally:
 
    ```text
@@ -157,8 +160,11 @@ user. Use `Labels: none` when no existing label clearly matches.
       before creating or updating the pull request, unless the user explicitly
       asked to skip review.
 13. Push the branch.
-14. Create or update a draft pull request linked to the issue, applying the
-    approved existing labels when any were selected.
+14. Create or update a draft pull request linked to the issue.
+    - For new pull requests, apply approved existing labels with
+      `gh pr create --label` when any were selected.
+    - For existing pull requests, update labels with `gh pr edit` so the pull
+      request matches the approved label set.
 15. Inspect pull request checks.
 16. Address review feedback in focused follow-up commits or amended commits,
     according to the repository's preferred history style.
@@ -271,11 +277,15 @@ Use `--label` only with labels that already exist in the repository. Repeat
 by the installed GitHub CLI. Omit `--label` entirely when no existing label
 clearly matches.
 
-Add or update issue labels after creation:
+Add, remove, or update issue labels after creation:
 
 ```bash
 gh issue edit <issue-number> --add-label "<existing-label>"
+gh issue edit <issue-number> --remove-label "<existing-label>"
 ```
+
+Use `--remove-label` when an existing label no longer clearly matches or when
+the approved label set omits it.
 
 Create an issue branch:
 
@@ -310,11 +320,15 @@ Update an existing pull request description:
 gh pr edit <pr-number> --body-file <file>
 ```
 
-Add or update pull request labels:
+Add, remove, or update pull request labels:
 
 ```bash
 gh pr edit <pr-number> --add-label "<existing-label>"
+gh pr edit <pr-number> --remove-label "<existing-label>"
 ```
+
+Use `--remove-label` when an existing label no longer clearly matches or when
+the approved label set omits it.
 
 Inspect checks:
 

@@ -268,14 +268,12 @@ Create an issue from an approved Markdown body:
 ```bash
 gh issue create \
   --title "<type>: <short imperative summary>" \
-  --label "<existing-label>" \
   --body-file <file>
 ```
 
-Use `--label` only with labels that already exist in the repository. Repeat
-`--label` for multiple selected labels, or pass a comma-separated list supported
-by the installed GitHub CLI. Omit `--label` entirely when no existing label
-clearly matches.
+When approved existing labels were selected and the creation flow supports
+labels, add one `--label "<existing-label>"` flag per label. Omit `--label`
+entirely when no existing label clearly matches.
 
 Add, remove, or update issue labels after creation:
 
@@ -307,12 +305,12 @@ gh pr create \
   --base main \
   --head <issue-number>-<semantic-title-slug> \
   --title "<type>: <short imperative summary>" \
-  --label "<existing-label>" \
   --body-file <file>
 ```
 
-Use `--label` only with labels that already exist in the repository. Omit it
-when no existing label clearly matches.
+When approved existing labels were selected, add one
+`--label "<existing-label>"` flag per label. Omit `--label` entirely when no
+existing label clearly matches.
 
 Update an existing pull request description:
 

@@ -3,7 +3,8 @@ name: github-workflow
 description: >
   Use GitHub CLI to run issue-first, pull-request-based development workflows:
   create semantic issues, issue-prefixed branches, linked pull requests,
-  focused commits, review-feedback fixes, and merge-ready PRs.
+  conservative label selection from existing repository labels, focused commits,
+  review-feedback fixes, and merge-ready PRs.
 ---
 
 # GitHub Workflow
@@ -26,6 +27,9 @@ tracking artifacts.
 - Split large features into smaller issues and pull requests before editing.
 - Treat configured GitHub issue and pull request templates as the source of
   truth for GitHub artifact content.
+- Apply labels conservatively from the repository's existing label set. Do not
+  create labels automatically; omit labels when no existing label clearly
+  matches the artifact.
 - Default to English for issue titles, pull request titles, branch names, and
   commit messages. Repository instructions and project conventions take
   precedence over user preference. Use another language for those
@@ -66,6 +70,28 @@ Pull request templates:
 - If no focused pull request template matches, use the default pull request
   template when one exists.
 
+## Label Selection
+
+Before creating or updating issues or pull requests, inspect the repository's
+current labels:
+
+```bash
+gh label list --limit 1000 --json name,description
+```
+
+Choose labels only from that existing list. Prefer labels that clearly match the
+artifact type, change type, affected area, or lifecycle state. Keep the
+selection small, usually one to three labels. If multiple labels seem plausible
+but none clearly fits, choose no label rather than guessing.
+
+Do not create, rename, recolor, or delete repository labels unless the user
+explicitly asks for label administration. If the repository uses template
+frontmatter or automation to apply labels, preserve that behavior and add manual
+labels only when they are still clearly useful.
+
+Include the proposed labels in the issue or pull request draft shown to the
+user. Use `Labels: none` when no existing label clearly matches.
+
 ## Required Sequence
 
 1. Inspect repository instructions such as `AGENTS.md`, `README.md`, GitHub
@@ -78,16 +104,24 @@ Pull request templates:
 
 3. If the task is too large for one focused pull request, propose a split before
    creating GitHub artifacts.
-4. Draft the GitHub issue title and description.
+4. Inspect existing repository labels and choose conservative issue labels.
+   - Use only labels that already exist in the repository.
+   - Prefer labels that match the issue template, requested change type, or
+     affected area.
+   - Use no label when none clearly match.
+5. Draft the GitHub issue title, description, and proposed labels.
    - Use a semantic English title unless the language rule above calls for
      another language.
    - Use the applicable issue template when one exists.
    - Fill the template's required sections before adding generic context such
      as goal, scope, acceptance criteria, and validation notes.
+   - Show proposed labels with the draft, including `Labels: none` when no
+     existing label clearly matches.
    - Show the draft issue content to the user and wait for approval before
      creating the issue, unless the user explicitly asked to skip review.
-5. Create the issue from the approved draft content with `gh issue create`.
-6. Create and switch to an issue-prefixed branch locally:
+6. Create the issue from the approved draft content with `gh issue create`,
+   applying the approved existing labels when any were selected.
+7. Create and switch to an issue-prefixed branch locally:
 
    ```text
    <issue-number>-<semantic-title-slug>
@@ -99,11 +133,17 @@ Pull request templates:
    12-feat-add-github-workflow-skill
    ```
 
-7. Implement the requested change only on the issue branch.
-8. Run relevant checks before committing.
-9. Commit with a semantic English commit message unless the language rule above
+8. Implement the requested change only on the issue branch.
+9. Run relevant checks before committing.
+10. Commit with a semantic English commit message unless the language rule above
    calls for another language.
-10. Before pushing or requesting review, draft the pull request title and
+11. Before pushing or requesting review, inspect existing repository labels and
+    choose conservative pull request labels.
+    - Reuse the issue labels when they still describe the pull request.
+    - Add or omit labels based on the actual diff, validation state, and
+      repository conventions.
+    - Use no label when none clearly match.
+12. Before pushing or requesting review, draft the pull request title and
     description.
     - Use a semantic English pull request title unless the language rule above
       calls for another language.
@@ -111,15 +151,18 @@ Pull request templates:
     - Combine the template with issue context, actual branch diffs or commits,
       and validation results.
     - Link the issue with `Closes #<issue-number>`.
+    - Show proposed labels with the draft, including `Labels: none` when no
+      existing label clearly matches.
     - Show the draft pull request content to the user and wait for approval
       before creating or updating the pull request, unless the user explicitly
       asked to skip review.
-11. Push the branch.
-12. Create or update a draft pull request linked to the issue.
-13. Inspect pull request checks.
-14. Address review feedback in focused follow-up commits or amended commits,
+13. Push the branch.
+14. Create or update a draft pull request linked to the issue, applying the
+    approved existing labels when any were selected.
+15. Inspect pull request checks.
+16. Address review feedback in focused follow-up commits or amended commits,
     according to the repository's preferred history style.
-15. Wait for checks and review to complete before merging.
+17. Wait for checks and review to complete before merging.
 
 ## Review Feedback Loop
 
@@ -161,8 +204,12 @@ local changes:
    - Validate the scoped changes.
    - Commit with a semantic English commit message unless the language rule
      above calls for another language.
+   - Inspect existing repository labels and choose conservative pull request
+     labels from that list.
    - Draft any needed pull request title or description updates from the
      matching template, issue context, scoped changes, and validation results.
+   - Show proposed label changes with the draft, including `Labels: unchanged`
+     when no label update is needed.
    - Get user approval before updating the pull request.
    - Push the branch, then update the pull request when needed.
 5. If no pull request exists but the branch already follows
@@ -175,8 +222,12 @@ local changes:
    - Validate the scoped changes.
    - Commit with a semantic English commit message unless the language rule
      above calls for another language.
+   - Inspect existing repository labels and choose conservative pull request
+     labels from that list.
    - Draft the pull request title and description from the matching template,
      issue context, scoped changes, and validation results.
+   - Show proposed labels with the draft, including `Labels: none` when no
+     existing label clearly matches.
    - Get user approval before creating or updating the pull request.
    - Push the branch, then create or update the pull request.
 6. If the branch does not follow the issue-branch format, do not commit
@@ -187,6 +238,12 @@ local changes:
 
 ## Useful Commands
 
+List existing repository labels:
+
+```bash
+gh label list --limit 1000 --json name,description
+```
+
 Create an issue from an issue form:
 
 ```bash
@@ -196,14 +253,28 @@ gh issue create --template <template-file> --web
 Use an actual issue template filename from `.github/ISSUE_TEMPLATE/` for
 `<template-file>`, such as `skill-update.yml`, `skill-new.yml`, or
 `maintenance.yml`. Do not use `config.yml`. Use the web or interactive flow for
-issue forms so required fields are preserved.
+issue forms so required fields are preserved. If the selected labels cannot be
+applied during the web or interactive flow, apply them afterward with
+`gh issue edit`.
 
 Create an issue from an approved Markdown body:
 
 ```bash
 gh issue create \
   --title "<type>: <short imperative summary>" \
+  --label "<existing-label>" \
   --body-file <file>
+```
+
+Use `--label` only with labels that already exist in the repository. Repeat
+`--label` for multiple selected labels, or pass a comma-separated list supported
+by the installed GitHub CLI. Omit `--label` entirely when no existing label
+clearly matches.
+
+Add or update issue labels after creation:
+
+```bash
+gh issue edit <issue-number> --add-label "<existing-label>"
 ```
 
 Create an issue branch:
@@ -226,13 +297,23 @@ gh pr create \
   --base main \
   --head <issue-number>-<semantic-title-slug> \
   --title "<type>: <short imperative summary>" \
+  --label "<existing-label>" \
   --body-file <file>
 ```
+
+Use `--label` only with labels that already exist in the repository. Omit it
+when no existing label clearly matches.
 
 Update an existing pull request description:
 
 ```bash
 gh pr edit <pr-number> --body-file <file>
+```
+
+Add or update pull request labels:
+
+```bash
+gh pr edit <pr-number> --add-label "<existing-label>"
 ```
 
 Inspect checks:
